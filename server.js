@@ -1,6 +1,8 @@
 import express from "express";
 import path from "path";
 import cors from "cors";
+const cors = require("cors");
+app.use(cors());
 import { fileURLToPath } from "url";
 
 const app = express();
@@ -85,3 +87,4 @@ app.get("/api/orders/:userId", (req, res) => {
 
 // Start server
 app.listen(PORT, () => console.log(`✅ Server running at http://localhost:${PORT}`));
+
