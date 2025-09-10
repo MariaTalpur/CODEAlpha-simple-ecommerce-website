@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en" style="background-color:#f99797 ;">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product Details</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <header>
+    
+    <nav style="display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 12px;">
+      <h1>🛒 My Online Shop</h1>
+      <a href="index.html">Home</a>
+      <a href="cart.html">Cart</a>
+      <span id="navUser"></span>
+    </nav>
+  </header>
+
+  <section id="product-details">
+    <p>Loading product...</p>
+  </section>
+
+  <script src="cart.js"></script>
+  <script>
+    // Show logged-in user
+    document.addEventListener("DOMContentLoaded", () => {
+      const userStr = localStorage.getItem("user");
+      const navUser = document.getElementById("navUser");
+      if (userStr && navUser) {
+        const user = JSON.parse(userStr);
+        navUser.textContent = `Hi, ${user.name}`;
+      }
+    });
+
+    // Fetch product id from URL
+    const params = new URLSearchParams(window.location.search);
+    const productId = parseInt(params.get("id"));
+
+    async function loadProduct() {
+      const container = document.getElementById("product-details");
+      try {
+        const res = await fetch("http://localhost:3000/products");
+        const products = await res.json();
+        const product = products.find(p => p.id === productId);
+
+        if (!product) {
+          container.innerHTML = "<p>Product not found.</p>";
+          return;
+        }
+
+        container.innerHTML = `
+          <div class="product-card">
+            <img src="${product.image_url}" alt="${product.title}" style="width:300px;height:300px;">
+            <h2>${product.title}</h2>
+            <p>${product.description || "No description available."}</p>
+            <p><strong>Price: Rs. ${product.price}</strong></p>
+            <button id="addToCartBtn" style="background-color: #765a5a">Add to Cart</button>
+          </div>
+        `;
+
+        document.getElementById("addToCartBtn").addEventListener("click", () => {
+          window.addToCart(product);
+        });
+
+      } catch (err) {
+        console.error(err);
+        container.innerHTML = "<p style='color:red;'>Failed to load product.</p>";
+      }
+    }
+
+    loadProduct();
+  </script>
+</body>
+</html>

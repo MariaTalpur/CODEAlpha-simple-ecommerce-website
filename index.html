@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Shop</title>
+  <style>
+    
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background:#f99797 ;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      background: #533838;
+      color: #fff;
+      padding: 2px;
+      text-align: center;
+    }
+
+    nav {
+      margin-top: 37px;
+    }
+
+    nav a {
+      color: white;
+      margin: 0 23px;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    nav a:hover {
+      text-decoration: underline;
+    }
+
+    section {
+      padding: 1px 2px;
+    }
+
+    h2 {
+      color: #fbf7f7;
+      font-size: xx-large;
+    }
+
+    p {
+      font-size: larger;
+    }
+
+    #products-list {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 27px;
+    }
+
+    .img1 {
+      display: flex;
+      justify-content: center;
+      gap: 22px;
+    }
+
+    .product-card {
+      background: #fcaeae;
+      border: 1px solid #ccc;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      width: 246px;
+    }
+
+    .product-card img {
+      width: 100%;
+      height: 150px;
+      border-radius: 5px;
+      object-fit: cover;
+    }
+
+    .product-card h3 {
+      margin: 10px 0;
+      font-size: 18px;
+    }
+
+    .product-card p {
+      color: rgb(251, 246, 243);
+      font-weight: bold;
+    }
+
+    .product-card button {
+      background: #4a3a30;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 5px;
+      cursor: pointer;
+      margin: 5px 0;
+    }
+
+    .product-card button:hover {
+      background: #856c5c;
+    }
+
+    footer {
+      background: #222;
+      color: #fff;
+      text-align: center;
+      padding: 15px;
+      margin-top: 30px;
+    }
+
+    .text {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      padding: 0px;
+    }
+
+    #searchInput {
+      padding: 10px;
+      width: 50%;
+      margin: 20px 0;
+      background: #fad2d2;
+      color: rgb(21, 20, 20);
+    }
+
+    /* 📱 Mobile Responsive Styles */
+    @media (max-width: 768px) {
+      header {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+      }
+
+      nav {
+        margin: 10px 0;
+      }
+
+      nav a {
+        display: inline-block;
+        margin: 8px;
+      }
+
+      #searchInput {
+        width: 90%;
+        margin: 10px auto;
+        display: block;
+      }
+
+      .img1 {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .img1 img {
+        width: 95% !important;
+        height: auto;
+      }
+
+      #products-list {
+        flex-direction: column;
+      }
+
+      .product-card {
+        width: 90%;
+      }
+    }
+  
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>🛒 My Online Shop</h1>
+    <input class="input" type="text" id="searchInput" placeholder="Search here...">
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="cart.html">Cart</a>
+      <span id="navUser"></span>
+    </nav>
+  </header>
+
+  <section class="home">
+    <div class="text">
+      <h2>Welcome to My Shop</h2>
+      <p>🎉 Best deals on gadgets, electronics, and accessories. Shop now and enjoy fast delivery all over Pakistan!</p>
+    </div>
+    <div class="img1">
+      <img src="https://new.designzima.com/wp-content/uploads/2023/02/IMG-3-1.png.webp" width="844px">
+      <img src="https://static.startuptalky.com/2022/08/top-products-and-catagories-startuptalky.jpg" width="644px">
+    </div>
+  </section>
+
+  <section id="products">
+    <h2>Our Products</h2>
+    <div id="products-list">Loading products...</div>
+  </section>
+
+  <section id="about">
+    <h2>About Us</h2>
+    <p>We are passionate about providing <b>affordable gadgets</b> and <b>quality electronics</b>. Our mission is to
+      bring the best technology to your doorstep.</p>
+  </section>
+
+  <section id="contact">
+    <h2>Contact Us</h2>
+    <p>Email: <b>support@myshop.com</b></p>
+    <p>Phone: <b>+92-300-1234567</b></p>
+    <p>Address: Karachi, Pakistan</p>
+  </section>
+
+  <footer>
+    <p>© 2025 My Shop. All rights reserved.</p>
+  </footer>
+
+  <script src="cart.js"></script>
+  <script>
+    // Show logged-in user
+    document.addEventListener("DOMContentLoaded", () => {
+      const userStr = localStorage.getItem("user");
+      const navUser = document.getElementById("navUser");
+      if (userStr && navUser) {
+        const user = JSON.parse(userStr);
+        navUser.textContent = `Hi, ${user.name}`;
+      }
+    });
+
+    window.products = [];
+
+    async function loadProducts() {
+      const container = document.getElementById("products-list");
+      try {
+        const res = await fetch("http://localhost:3000/products");
+        const data = await res.json();
+        window.products = data;
+
+        container.innerHTML = data.map(p => `
+          <div class="product-card">
+            <img src="${p.image_url}" alt="${p.title}">
+            <h3>${p.title}</h3>
+            <p>Rs. ${p.price}</p>
+            <button onclick="window.location.href='product.html?id=${p.id}'">View Details</button>
+            <button onclick="addToCartById(${p.id})">Add to Cart</button>
+          </div>
+        `).join("");
+      } catch (err) {
+        console.error(err);
+        container.innerHTML = "<p style='color:red;'>⚠ Failed to load products.</p>";
+      }
+    }
+
+    function addToCartById(id) {
+      const product = window.products.find(p => p.id === id);
+      if (product) window.addToCart(product);
+    }
+
+    document.addEventListener("DOMContentLoaded", loadProducts);
+  </script>
+</body>
+</html>
